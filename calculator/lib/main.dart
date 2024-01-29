@@ -2,6 +2,7 @@
 
 import 'package:calculator/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,14 +48,13 @@ class _HomePageState extends State<HomePage> {
     '+',
     '0',
     '.',
-    'ANS',
     '=',
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple[100],
+      backgroundColor: Colors.black,
       body: Column(
         children: [
           Expanded(
@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.all(20),
                     child: Text(
                       userQuestion,
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 30, color: Colors.white),
                     ),
                   ),
                   Container(
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.all(20),
                     child: Text(
                       userAnswer,
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),
                 ],
@@ -119,6 +119,19 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.red,
                           textColor: Colors.white,
                         );
+                        //equal
+                      } else if (index == buttons.length - 1) {
+                        return MyButton(
+                          buttonTapped: () {
+                            setState(() {
+                              equalPressed();
+                            });
+                          },
+                          buttonText: buttons[index],
+                          color: Colors.orange,
+                          textColor: Colors.white,
+                        );
+                        //0
                       } else {
                         return MyButton(
                           buttonTapped: () {
@@ -149,5 +162,15 @@ class _HomePageState extends State<HomePage> {
       return true;
     }
     return false;
+  }
+
+  void equalPressed() {
+    String finalQuestion = userQuestion;
+    finalQuestion = finalQuestion.replaceAll('x', '*');
+    Parser p = Parser();
+    Expression exp = p.parse(finalQuestion);
+    ContextModel cm = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, cm);
+    userAnswer = eval.toString();
   }
 }
